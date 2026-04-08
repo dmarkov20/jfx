@@ -119,8 +119,10 @@ public class SystemMenuBarHelpMenuTest {
 
         // Step 2: click on About
         Util.runAndWait(() -> {
-            robot.mouseMove(MENU_BAR_X, MENU_ABOUT_Y);
-            robot.mouseClick(MouseButton.PRIMARY);
+            //robot.mouseMove(MENU_BAR_X, MENU_ABOUT_Y);
+            //robot.mouseClick(MouseButton.PRIMARY);
+            robot.keyType(KeyCode.DOWN);
+            robot.keyType(KeyCode.ENTER);
         });
         Util.waitForLatch(aboutItemLatch, 5, "About menu item action should fire");
 
