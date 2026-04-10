@@ -51,8 +51,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import test.util.Util;
-import org.junit.jupiter.api.extension.ExtendWith;
-import test.util.ScreenCaptureTestWatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +61,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Tests that the Help menu in the system menu bar behaves correctly when a dialog
  * is shown while the menu was opened.
  */
-@ExtendWith(ScreenCaptureTestWatcher.class)
 public class SystemMenuBarHelpMenuTest {
 
     // Changing this to anything different than "Help" will avoid the insertion of the Spotlight search field
@@ -84,6 +81,7 @@ public class SystemMenuBarHelpMenuTest {
     private static final int MENU_ABOUT_Y = 80;
 
     private static Robot robot;
+    private static MenuItem aboutItem;
     private static final AtomicBoolean aboutItemFired = new AtomicBoolean(false);
     private static final CountDownLatch aboutItemLatch = new CountDownLatch(1);
 
@@ -101,15 +99,19 @@ public class SystemMenuBarHelpMenuTest {
      * Verifies that after opening, the Help menu includes the Spotlight search field, which is
      * included seamlessly by the system.
      */
-    //@Disabled("JDK-8381443")
     @Test
     void testHelpMenuHasSpotlight() {
         Assumptions.assumeTrue(PlatformUtil.isMac(), "System menu bar tests only apply to macOS");
 
         // Step 1: open the menu via the Robot
         Util.runAndWait(() -> {
-            robot.mouseMove(MENU_BAR_X, MENU_BAR_Y);
-            robot.mouseClick(MouseButton.PRIMARY);
+            robot.keyPress(KeyCode.CONTROL);
+            robot.keyPress(KeyCode.F2);
+            robot.keyRelease(KeyCode.F2);
+            robot.keyRelease(KeyCode.CONTROL);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.ENTER);
         });
         Util.sleep(DELAY);
 
@@ -119,8 +121,6 @@ public class SystemMenuBarHelpMenuTest {
 
         // Step 2: click on About
         Util.runAndWait(() -> {
-            //robot.mouseMove(MENU_BAR_X, MENU_ABOUT_Y);
-            //robot.mouseClick(MouseButton.PRIMARY);
             robot.keyType(KeyCode.DOWN);
             robot.keyType(KeyCode.ENTER);
         });
@@ -138,15 +138,19 @@ public class SystemMenuBarHelpMenuTest {
      * Verifies that after opening the system menu and then showing a modal dialog
      * the menu can still be opened again after the dialog is closed.
      */
-    //@Disabled("JDK-8381443")
     @Test
     void testMenuCanBeReopenedAfterDialogClosed() {
         Assumptions.assumeTrue(PlatformUtil.isMac(), "System menu bar tests only apply to macOS");
 
         // Step 1: open the menu via the Robot
         Util.runAndWait(() -> {
-            robot.mouseMove(MENU_BAR_X, MENU_BAR_Y);
-            robot.mouseClick(MouseButton.PRIMARY);
+            robot.keyPress(KeyCode.CONTROL);
+            robot.keyPress(KeyCode.F2);
+            robot.keyRelease(KeyCode.F2);
+            robot.keyRelease(KeyCode.CONTROL);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.ENTER);
         });
         Util.sleep(DELAY);
 
@@ -209,8 +213,13 @@ public class SystemMenuBarHelpMenuTest {
 
         // Step 5: click the menu to open it again
         Util.runAndWait(() -> {
-            robot.mouseMove(MENU_BAR_X, MENU_BAR_Y);
-            robot.mouseClick(MouseButton.PRIMARY);
+            robot.keyPress(KeyCode.CONTROL);
+            robot.keyPress(KeyCode.F2);
+            robot.keyRelease(KeyCode.F2);
+            robot.keyRelease(KeyCode.CONTROL);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.RIGHT);
+            robot.keyType(KeyCode.ENTER);
         });
         Util.sleep(DELAY);
 
@@ -229,7 +238,7 @@ public class SystemMenuBarHelpMenuTest {
             robot = new Robot();
             SystemMenuBarHelpMenuTest.stage = stage;
 
-            MenuItem aboutItem = new MenuItem("About");
+            aboutItem = new MenuItem("About");
             aboutItem.setOnAction(_ -> {
                 aboutItemFired.set(true);
                 aboutItemLatch.countDown();
